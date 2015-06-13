@@ -25,6 +25,8 @@ class CLIENT{
 
         fd_set readfd;
 
+        std::string nick_name;
+
         void Set_FD();
         int Command_Line();
         int Client();

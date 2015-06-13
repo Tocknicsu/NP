@@ -2,6 +2,8 @@
 
 
 void CLIENT::Run(){
+    std::cout << "Enter your nick name: ";
+    std::cin >> nick_name;
     m_log = LOG("client.log");
 
     m_sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -17,7 +19,11 @@ void CLIENT::Run(){
     if( connect(m_sock, (sockaddr*)&m_server, sizeof(m_server)) < 0){
         return;
     }
-    std::cout << "OK" << std::endl;
+    {
+        char buffer[BUFFER_SIZE+1];
+        sprintf(buffer, "/init_nick %s", nick_name.c_str());
+        write(m_sock, buffer, strlen(buffer));
+    }
     struct timeval timeout = {0, 0};
     while(true){
         Set_FD();
@@ -31,7 +37,9 @@ void CLIENT::Run(){
                 return;
         }
         {
-            Client();
+            int result = Client();
+            if(result == -1)
+                return;
         }
     }
 }
@@ -64,7 +72,12 @@ int CLIENT::Client(){
         char buffer[BUFFER_SIZE+1];
         int result = read(m_sock, buffer, BUFFER_SIZE);
         buffer[result] = 0;
-        std::cout << buffer << std::endl;
+        if(result == 0){
+            std::cout << "Server closed." << std::endl;
+            return -1;
+        } else {
+            std::cout << buffer << std::endl;
+        }
     }
     return 0;
 }
