@@ -123,7 +123,7 @@ void SERVER::Client(){
             int result = read(it->socket, buffer, BUFFER_SIZE);
             buffer[result] = 0;
             if( result == 0){
-                sprintf(msg, "[System] %s Exited.", it->nick_name.c_str());
+                sprintf(msg, "[System] %s Exited.\r\n", it->nick_name.c_str());
                 std::cout << "Close Connection: " << it->ip << std::endl;
                 std::cout << msg << std::endl;
                 m_log.write(std::string("Closed ") + it->ip);
@@ -140,22 +140,22 @@ void SERVER::Client(){
                 ss >> str;
                 if(str == "/init_nick"){
                     ss >> it->nick_name;
-                    sprintf(msg, "[System] %s Join.", it->nick_name.c_str());
+                    sprintf(msg, "[System] %s Join.\r\n", it->nick_name.c_str());
                     {
                         char hello_msg[BUFFER_SIZE+1];
-                        sprintf(hello_msg, "[System] Hello %s", it->nick_name.c_str());
+                        sprintf(hello_msg, "[System] Hello %s\r\n", it->nick_name.c_str());
                         write(it->socket, hello_msg, strlen(hello_msg));
                     }
                 } else if(str == "/nick"){
                     std::string old_nick_name = it->nick_name;
                     ss >> it->nick_name;
-                    sprintf(msg, "[System] [%s] change to [%s]", old_nick_name.c_str(), it->nick_name.c_str());
+                    sprintf(msg, "[System] [%s] change to [%s]\r\n", old_nick_name.c_str(), it->nick_name.c_str());
                 } else {
-                    sprintf(msg, "[%s]: %s", it->nick_name.c_str(), buffer);
+                    sprintf(msg, "[%s]: %s\r\n", it->nick_name.c_str(), buffer);
                 }
                 for(auto client : m_client_list)
                     write(client.socket, msg, strlen(msg));
-                std::cout << msg << std::endl;
+                std::cout << msg;
             }
         }
         ++it;

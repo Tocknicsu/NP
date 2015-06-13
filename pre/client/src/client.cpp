@@ -76,7 +76,7 @@ int CLIENT::Client(){
             std::cout << "Server closed." << std::endl;
             return -1;
         } else {
-            std::cout << buffer << std::endl;
+            std::cout << buffer;
         }
     }
     return 0;
