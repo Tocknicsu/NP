@@ -113,27 +113,49 @@ void SERVER::Server(){
         m_client_list.push_back(new_client);
         std::cout << "New Connection: " << new_client.ip << std::endl;
         m_log.write(std::string("Connected") + new_client.ip);
-        write(new_client.socket, "hello\x00", 6);
     }
 }
 void SERVER::Client(){
     int result;
-    char buffer[BUFFER_SIZE+1];
+    char buffer[BUFFER_SIZE+1], msg[BUFFER_SIZE+1];
     for(std::list<CLIENT>::iterator it = m_client_list.begin() ; it != m_client_list.end() ;){
         if(FD_ISSET(it->socket, &readfd)){
             int result = read(it->socket, buffer, BUFFER_SIZE);
             buffer[result] = 0;
             if( result == 0){
+                sprintf(msg, "[System] %s Exited.", it->nick_name.c_str());
                 std::cout << "Close Connection: " << it->ip << std::endl;
+                std::cout << msg << std::endl;
                 m_log.write(std::string("Closed ") + it->ip);
                 std::list<CLIENT>::iterator tmp = it;
                 it = ++it;
                 m_client_list.erase(tmp);
+
+                for(auto client : m_client_list)
+                    write(client.socket, msg, strlen(msg));
                 continue;
             } else {
+                std::stringstream ss(buffer);
+                std::string str;
+                ss >> str;
+                if(str == "/init_nick"){
+                    ss >> it->nick_name;
+                    sprintf(msg, "[System] %s Join.", it->nick_name.c_str());
+                    {
+                        char hello_msg[BUFFER_SIZE+1];
+                        sprintf(hello_msg, "[System] Hello %s", it->nick_name.c_str());
+                        write(it->socket, hello_msg, strlen(hello_msg));
+                    }
+                } else if(str == "/nick"){
+                    std::string old_nick_name = it->nick_name;
+                    ss >> it->nick_name;
+                    sprintf(msg, "[System] [%s] change to [%s]", old_nick_name.c_str(), it->nick_name.c_str());
+                } else {
+                    sprintf(msg, "[%s]: %s", it->nick_name.c_str(), buffer);
+                }
                 for(auto client : m_client_list)
-                    write(client.socket, buffer, strlen(buffer));
-                std::cout << buffer << std::endl;
+                    write(client.socket, msg, strlen(msg));
+                std::cout << msg << std::endl;
             }
         }
         ++it;

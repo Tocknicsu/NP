@@ -19,6 +19,7 @@ class SERVER{
         sockaddr_in addr;
         socklen_t   addr_len;
         std::string ip;
+        std::string nick_name;
     };
     private:
 		sockaddr_in m_server;
