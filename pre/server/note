@@ -1,0 +1,7 @@
+client status:
+-1
+
+if( status == 0 ){
+	sent
+	status = 1
+} else if (stats == 
