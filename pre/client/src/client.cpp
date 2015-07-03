@@ -21,8 +21,8 @@ void CLIENT::Run(){
     }
     {
         char buffer[BUFFER_SIZE+1];
-        sprintf(buffer, "/init_nick %s", nick_name.c_str());
-        write(m_sock, buffer, strlen(buffer));
+//        sprintf(buffer, "/init_nick %s\r\nXDDD\r\nQQQQ\r\n", nick_name.c_str());
+//        write(m_sock, buffer, strlen(buffer));
     }
     struct timeval timeout = {0, 0};
     while(true){

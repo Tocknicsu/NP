@@ -125,7 +125,7 @@ void SERVER::Client(){
             if( result == 0){
                 sprintf(msg, "[System] %s Exited.\r\n", it->nick_name.c_str());
                 std::cout << "Close Connection: " << it->ip << std::endl;
-                std::cout << msg << std::endl;
+                std::cout << msg;
                 m_log.write(std::string("Closed ") + it->ip);
                 std::list<CLIENT>::iterator tmp = it;
                 it = ++it;
